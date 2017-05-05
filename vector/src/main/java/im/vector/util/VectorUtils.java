@@ -269,6 +269,10 @@ public class VectorUtils {
             displayName = context.getString(R.string.room_displayname_more_than_two_members, roomState.getMemberName(member.getUserId()), othersActiveMembers.size() - 1);
         }
 
+       if (displayName.contains(context.getString(R.string.default_name_extension))) {
+            return displayName.replace(context.getString(R.string.default_name_extension), "");
+        }
+
         return displayName;
     }
 
@@ -883,7 +887,7 @@ public class VectorUtils {
                 public void onSuccess(Void info) {
                     boolean isUpdated = false;
                     User updatedUser = session.getDataHandler().getStore().getUser(userId);
-
+        
                     // don't find any info for the user
                     if ((null == user) && (null == updatedUser)) {
                         Log.d(LOG_TAG, "Don't find any presence info of " + userId);

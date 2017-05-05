@@ -64,6 +64,7 @@
     <string name="matrix_org_server_url">https://matrix.org</string>
     <string name="default_hs_server_url">https://matrix.org</string>
     <string name="default_identity_server_url">https://vector.im</string>
+    <string name="default_name_extension">:matrix.org</string>
 
     <!-- actions -->
     <string name="action_settings">Settings</string>
@@ -209,7 +210,7 @@
     <string name="auth_invalid_token">Invalid token</string>
     <string name="auth_password_dont_match">Passwords don\'t match</string>
     <string name="auth_forgot_password">Forgot password?</string>
-    <string name="auth_use_server_options">Use custom server options (advanced)</string>
+    <string name="auth_use_server_options"> </string>
     <string name="auth_email_validation_message">Please check your email to continue registration</string>
     <string name="auth_threepid_warning_message">Registration with email and phone number at once is not supported yet until the api exists. Only the phone number will be taken into account.\n\nYou may add your email to your profile in settings.</string>
     <string name="auth_email_check_name_in_use_message">"Checking if user name is available..</string>

@@ -1260,7 +1260,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
 
         TextView userIdTextView = (TextView) navigationView.findViewById(R.id.home_menu_main_matrix_id);
         if (null != userIdTextView) {
-            userIdTextView.setText(mSession.getMyUserId());
+            userIdTextView.setText(mSession.getMyUserId().replace(getResources().getString(R.string.default_name_extension), ""));
         }
 
         ImageView mainAvatarView = (ImageView)navigationView.findViewById(R.id.home_menu_main_avatar);

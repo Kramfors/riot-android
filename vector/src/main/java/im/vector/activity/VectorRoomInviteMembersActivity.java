@@ -37,6 +37,7 @@ import java.util.Map;
 
 import im.vector.Matrix;
 import im.vector.R;
+import im.vector.RegistrationManager;
 import im.vector.adapters.ParticipantAdapterItem;
 import im.vector.adapters.VectorParticipantsAdapter;
 import im.vector.contacts.Contact;
@@ -249,16 +250,28 @@ public class VectorRoomInviteMembersActivity extends VectorBaseSearchActivity {
     protected void onPatternUpdate(boolean isTypingUpdate) {
         String pattern = mPatternToSearchEditText.getText().toString();
 
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(pattern).matches()) {
+            pattern = "@" + pattern.concat(getResources().getString(R.string.default_name_extension));
+        }
+
+
         ParticipantAdapterItem firstEntry = null;
 
         if (!TextUtils.isEmpty(pattern)) {
             // remove useless spaces
             pattern = pattern.trim();
 
-            // test if the pattern is a valid email or matrix id
-            boolean isValid = android.util.Patterns.EMAIL_ADDRESS.matcher(pattern).matches() ||
-                    MXSession.isUserId(pattern);
-            firstEntry = new ParticipantAdapterItem(pattern, null, pattern, isValid);
+            boolean isValid = !mPatternToSearchEditText.getText().toString().equals("");
+            String displayName = new String(pattern);
+            if (displayName.contains(getResources().getString(R.string.default_name_extension))) {
+                displayName = displayName.replace(getResources().getString(R.string.default_name_extension), "");
+
+                    if (displayName.startsWith("@")){
+                        displayName = displayName.substring(1);
+                    }
+            }
+
+            firstEntry = new ParticipantAdapterItem(displayName, null, pattern, isValid);
         }
 
         // display a spinner while the other room members are listed
@@ -307,7 +320,8 @@ public class VectorRoomInviteMembersActivity extends VectorBaseSearchActivity {
             }
         }
 
-        builder.setMessage(getString(R.string.room_participants_invite_prompt_msg, displayName));
+        String newDisplayName = displayName.replace(getResources().getString(R.string.default_name_extension), "");
+        builder.setMessage(getString(R.string.room_participants_invite_prompt_msg, newDisplayName));
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

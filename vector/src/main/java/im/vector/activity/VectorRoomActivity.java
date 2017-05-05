@@ -699,6 +699,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
             }
         });
 
+
         mVectorPendingCallView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -747,54 +748,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
             }
         });
 
-        mStartCallLayout = findViewById(R.id.room_start_call_layout);
-        mStartCallLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if ((null != mRoom) && mRoom.isEncrypted() && (mRoom.getActiveMembers().size() > 2)) {
-                    // display the dialog with the info text
-                    AlertDialog.Builder permissionsInfoDialog = new AlertDialog.Builder(VectorRoomActivity.this);
-                    Resources resource = getResources();
-                    permissionsInfoDialog.setMessage(resource.getString(R.string.room_no_conference_call_in_encrypted_rooms));
-                    permissionsInfoDialog.setIcon(android.R.drawable.ic_dialog_alert);
-                    permissionsInfoDialog.setPositiveButton(resource.getString(R.string.ok), null);
-                    permissionsInfoDialog.show();
-
-                } else if (isUserAllowedToStartConfCall()) {
-                    displayVideoCallIpDialog();
-                } else {
-                    displayConfCallNotAllowed();
-                }
-            }
-        });
-
-        mStopCallLayout = findViewById(R.id.room_end_call_layout);
-        mStopCallLayout.setOnClickListener(new View.OnClickListener() {
-                                               @Override
-                                               public void onClick(View v) {
-                                                   IMXCall call = mSession.mCallsManager.getCallWithRoomId(mRoom.getRoomId());
-
-                                                   if (null != call) {
-                                                       call.hangup(null);
-                                                   }
-                                               }
-                                           }
-        );
-
-        findViewById(R.id.room_button_margin_right).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // extend the right side of right button
-                // to avoid clicking in the void
-                if (mStopCallLayout.getVisibility() == View.VISIBLE) {
-                    mStopCallLayout.performClick();
-                } else if (mStartCallLayout.getVisibility() == View.VISIBLE) {
-                    mStartCallLayout.performClick();
-                } else if (mSendButtonLayout.getVisibility() == View.VISIBLE) {
-                    mSendButtonLayout.performClick();
-                }
-            }
-        });
+        //initializeCallLayout();
 
         mMyUserId = mSession.getCredentials().userId;
 
@@ -1101,6 +1055,60 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
         }
     }
 
+    private void initializeCallLayout() {
+
+        //mStartCallLayout = findViewById(R.id.room_start_call_layout);
+        mStartCallLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ((null != mRoom) && mRoom.isEncrypted() && (mRoom.getActiveMembers().size() > 2)) {
+                    // display the dialog with the info text
+                    AlertDialog.Builder permissionsInfoDialog = new AlertDialog.Builder(VectorRoomActivity.this);
+                    Resources resource = getResources();
+                    permissionsInfoDialog.setMessage(resource.getString(R.string.room_no_conference_call_in_encrypted_rooms));
+                    permissionsInfoDialog.setIcon(android.R.drawable.ic_dialog_alert);
+                    permissionsInfoDialog.setPositiveButton(resource.getString(R.string.ok), null);
+                    permissionsInfoDialog.show();
+
+                } else if (isUserAllowedToStartConfCall()) {
+                    displayVideoCallIpDialog();
+                } else {
+                    displayConfCallNotAllowed();
+                }
+            }
+        });
+
+        //mStopCallLayout = findViewById(R.id.room_end_call_layout);
+        mStopCallLayout.setOnClickListener(new View.OnClickListener() {
+                                               @Override
+                                               public void onClick(View v) {
+                                                   IMXCall call = mSession.mCallsManager.getCallWithRoomId(mRoom.getRoomId());
+
+                                                   if (null != call) {
+                                                       call.hangup(null);
+                                                   }
+                                               }
+                                           }
+        );
+
+        /*
+        findViewById(R.id.room_button_margin_right).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // extend the right side of right button
+                // to avoid clicking in the void
+                if (mStopCallLayout.getVisibility() == View.VISIBLE) {
+                    mStopCallLayout.performClick();
+                } else if (mStartCallLayout.getVisibility() == View.VISIBLE) {
+                    mStartCallLayout.performClick();
+                } else if (mSendButtonLayout.getVisibility() == View.VISIBLE) {
+                    mSendButtonLayout.performClick();
+                }
+            }
+        });
+        */
+    }
+
     //================================================================================
     // IEventSendingListener
     //================================================================================
@@ -1188,6 +1196,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // the application is in a weird state
         // the application is in a weird state
         // GA : mSession is null
         if (CommonActivityUtils.shouldRestartApp(this) || (null == mSession)) {
@@ -1316,7 +1325,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
         }
 
         Log.d(LOG_TAG, "## isUserAllowedToStartConfCall(): isAllowed=" + isAllowed);
-        return isAllowed;
+        return false;
     }
 
     /**
@@ -1330,7 +1339,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
 
         if ((null != resource) && (null != permissionsInfoDialog)) {
             permissionsInfoDialog.setTitle(resource.getString(R.string.missing_permissions_title_to_start_conf_call));
-            permissionsInfoDialog.setMessage(resource.getString(R.string.missing_permissions_to_start_conf_call));
+            permissionsInfoDialog.setMessage("Call feature has been disabled.");
 
             permissionsInfoDialog.setIcon(android.R.drawable.ic_dialog_alert);
             permissionsInfoDialog.setPositiveButton(resource.getString(R.string.ok), null);
@@ -1338,6 +1347,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
         } else {
             Log.e(LOG_TAG, "## displayConfCallNotAllowed(): impossible to create dialog");
         }
+
     }
 
     /**
@@ -2103,7 +2113,9 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
     /**
      * Refresh the call buttons display.
      */
+
     private void refreshCallButtons() {
+        /*
         if ((null == sRoomPreviewData) && (null == mEventId) && canSendMessages()) {
             boolean isCallSupported = mRoom.canPerformCall() && mSession.isVoipCallSupported();
             IMXCall call = VectorCallViewActivity.getActiveCall();
@@ -2124,6 +2136,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
 
             mVectorOngoingConferenceCallView.refresh();
         }
+        */
     }
 
     /**

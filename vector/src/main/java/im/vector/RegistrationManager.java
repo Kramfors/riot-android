@@ -713,6 +713,8 @@ public class RegistrationManager {
 
     /**
      * Request a validation token for the given three pid
+     *NEXTLINK_BASE_URL changed to homeserver url
+     *
      *
      * @param pid
      * @param listener
@@ -721,10 +723,14 @@ public class RegistrationManager {
         if (getThirdPidRestClient() != null) {
             switch (pid.medium) {
                 case ThreePid.MEDIUM_EMAIL:
+                    /*
                     String nextLink = NEXTLINK_BASE_URL + "/#/register?client_secret=" + pid.clientSecret;
                     nextLink += "&hs_url=" + mHsConfig.getHomeserverUri().toString();
                     nextLink += "&is_url=" + mHsConfig.getIdentityServerUri().toString();
                     nextLink += "&session_id=" + mRegistrationResponse.session;
+                    */
+
+                    String nextLink = "";
                     pid.requestEmailValidationToken(getThirdPidRestClient(), nextLink, new ApiCallback<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {

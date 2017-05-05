@@ -425,6 +425,7 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
         mForgotPassword2TextView = (EditText) findViewById(R.id.forget_confirm_new_password);
 
         mHomeServerOptionLayout = findViewById(R.id.homeserver_layout);
+
         mHomeServerText = (EditText) findViewById(R.id.login_matrix_server_url);
         mIdentityServerText = (EditText) findViewById(R.id.login_identity_url);
 
@@ -435,6 +436,7 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
 
         mHomeServerUrlsLayout = findViewById(R.id.login_matrix_server_options_layout);
         mUseCustomHomeServersCheckbox = (CheckBox) findViewById(R.id.display_server_url_expand_checkbox);
+        mUseCustomHomeServersCheckbox.setVisibility(View.GONE);
 
         mProgressTextView = (TextView) findViewById(R.id.flow_progress_message_textview);
 
@@ -546,12 +548,18 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
                 mUseCustomHomeServersCheckbox.post(new Runnable() {
                     @Override
                     public void run() {
+
+                        if (mUseCustomHomeServersCheckbox.isChecked() == false) {
+                            mUseCustomHomeServersCheckbox.setChecked(true);
+                        }
                         // reset the HS urls.
+                        /*
                         mHomeServerUrl = null;
                         mIdentityServerUrl = null;
                         onIdentityserverUrlUpdate();
                         onHomeServerUrlUpdate();
                         refreshDisplay();
+                        */
                     }
                 });
             }
@@ -820,7 +828,7 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
     }
 
     /**
-     * Some sessions have been registred, skip the login process.
+     * Some sessions have been registered, skip the login process.
      */
     private void goToSplash() {
         Log.d(LOG_TAG, "## gotoSplash(): Go to splash.");
@@ -1206,6 +1214,7 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
         final HomeserverConnectionConfig homeServerConfig = mHomeserverConnectionConfig = new HomeserverConnectionConfig(Uri.parse(aHomeServer), Uri.parse(aIdentityServer), null, new ArrayList<Fingerprint>(), false);
         Log.d(LOG_TAG, "## submitEmailToken(): IN");
 
+
         if (mMode == MODE_ACCOUNT_CREATION) {
             Log.d(LOG_TAG, "## submitEmailToken(): calling submitEmailTokenValidation()..");
             mLoginHandler.submitEmailTokenValidation(getApplicationContext(), homeServerConfig, aToken, aClientSecret, aSid, new ApiCallback<Boolean>() {
@@ -1519,6 +1528,10 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
      * The user clicks on the login button
      */
     private void onLoginClick() {
+
+        mHomeServerText.setText(getResources().getString(R.string.default_hs_server_url));
+        mIdentityServerText.setText(getResources().getString(R.string.default_identity_server_url));
+
         if (onHomeServerUrlUpdate() || onIdentityserverUrlUpdate()) {
             mIsPendingLogin = true;
             Log.d(LOG_TAG, "## onLoginClick() : The user taps on login but the IS/HS did not loos the focus");
@@ -1837,8 +1850,7 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
         checkFlows();
 
         // home server
-        mHomeServerUrlsLayout.setVisibility(mUseCustomHomeServersCheckbox.isChecked() ? View.VISIBLE : View.GONE);
-
+        mHomeServerUrlsLayout.setVisibility(View.GONE);
         // views
         View loginLayout = findViewById(R.id.login_inputs_layout);
         View creationLayout = findViewById(R.id.creation_inputs_layout);

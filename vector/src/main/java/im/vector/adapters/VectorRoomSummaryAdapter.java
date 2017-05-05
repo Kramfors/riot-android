@@ -1058,6 +1058,11 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
             }
         }
 
+        String message = messageToDisplayRetValue.toString();
+        if (message.contains(mContext.getString(R.string.default_name_extension))) {
+            return message.replace(mContext.getString(R.string.default_name_extension), "");
+        }
+
         return messageToDisplayRetValue;
     }
 
